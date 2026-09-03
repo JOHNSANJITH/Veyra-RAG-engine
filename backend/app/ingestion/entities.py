@@ -33,14 +33,14 @@ def extract_entities(text: str) -> List[str]:
     doc = NLP(text)
     concepts: Set[str] = set()
 
-    # 1. Named entities
+                       
     for ent in doc.ents:
         if ent.label_ in _ALLOWED_LABELS:
             value = ent.text.strip()
             if 3 <= len(value) <= 60:
                 concepts.add(value)
 
-    # 2. Noun chunks (technical phrases)
+                                        
     for chunk in doc.noun_chunks:
         value = chunk.text.strip()
         word_count = len(value.split())

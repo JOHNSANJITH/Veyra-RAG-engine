@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 from typing import List
 
-import fitz  # PyMuPDF
+import fitz           
 from app.models.ingestion import RawSegment
 
 HEADING_REGEX = re.compile(r"^\d+\.\s+[A-Z].+")
@@ -31,7 +31,7 @@ def extract_pages(file_path: Path, doc_id: str) -> List[RawSegment]:
         page_number = page_index + 1
 
         for block in blocks:
-            # Skip non-text blocks (images, drawings, etc.)
+                                                           
             if block["type"] != 0:
                 continue
 
@@ -41,7 +41,7 @@ def extract_pages(file_path: Path, doc_id: str) -> List[RawSegment]:
                 if not line_text:
                     continue
 
-                # New heading → flush previous block
+                                                    
                 if HEADING_REGEX.match(line_text) and current_block:
                     segments.append(
                         RawSegment(

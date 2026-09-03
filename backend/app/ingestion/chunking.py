@@ -31,7 +31,7 @@ def chunk_segments(segments: List[RawSegment]) -> List[Chunk]:
                 )
             )
 
-            # move forward with overlap
+                                       
             start = end - OVERLAP_CHARS
 
     return chunks

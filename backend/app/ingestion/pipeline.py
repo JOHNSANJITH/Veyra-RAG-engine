@@ -9,13 +9,13 @@ from app.ingestion.entities import extract_entities
 from app.ingestion.indexing import index_chunks
 from app.ingestion.pdf_loader import extract_pages
 from app.models.ingestion import Chunk, RawSegment
-from app.retrieval.chunk_registry import register_chunks
+from app.retrieval.chunk_registry import get_chunks, register_chunks
 from app.retrieval.graph_utils import index_entities
 from app.retrieval.keyword_index import build_bm25_index
 
 
 def ingest_pdf(file_path: Path, doc_id: str) -> List[Chunk]:
-    """Ingest a PDF document."""
+    """Ingest a PDF document and update all retrieval indexes."""
     raw_segments = extract_pages(file_path, doc_id)
     cleaned_segments = _clean_segments(raw_segments)
 
@@ -27,7 +27,10 @@ def ingest_pdf(file_path: Path, doc_id: str) -> List[Chunk]:
     register_chunks(chunks)
     index_entities(chunks)
     index_chunks(chunks)
-    build_bm25_index(chunks)
+
+                                                                              
+                                                                                
+    build_bm25_index(get_chunks())
     return chunks
 
 

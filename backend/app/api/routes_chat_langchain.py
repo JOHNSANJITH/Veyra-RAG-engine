@@ -33,7 +33,7 @@ def chat_langchain(request: ChatRequest) -> ChatResponse:
     answer = result["result"]
     source_docs = result.get("source_documents", [])
 
-    # Convert LangChain docs → ScoredChunk
+                                          
     scored_chunks = [
         ScoredChunk(
             chunk=doc.metadata["chunk"],

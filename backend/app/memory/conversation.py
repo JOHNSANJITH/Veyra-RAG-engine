@@ -3,7 +3,7 @@
 from collections import defaultdict, deque
 from typing import Deque, Dict, List, Tuple
 
-# Each message: (role, content)
+                               
 Message = Tuple[str, str]
 
 _MAX_TURNS = 4
@@ -36,5 +36,5 @@ class ConversationMemory:
         self._store.pop(session_id, None)
 
 
-# Global singleton instance
+                           
 conversation_memory = ConversationMemory()

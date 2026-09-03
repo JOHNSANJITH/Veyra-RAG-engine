@@ -12,13 +12,11 @@ license: mit
 
 **Hybrid Graph-Augmented Retrieval-Augmented Generation System**
 
-Veyra is a production-oriented document summarization and question-answering system that combines vector search, graph-based reasoning, and LLM-based generation to provide grounded, citation-aware responses over uploaded documents.
+Veyra is an engineering-focused document summarization and question-answering system that combines vector search, graph-based reasoning, and LLM-based generation to provide grounded, citation-aware responses over uploaded documents.
 
 The system extends traditional vector retrieval with concept co-occurrence graphs, enabling contextual expansion for complex queries that require information from multiple sections of a document.
 
-![Veyra Web Interface](./docs/images/veyra-interface.png)
-
-**[Live Demo](#)**
+**Demo:** Add the deployed frontend URL here when a public deployment is available.
 
 ---
 
@@ -90,7 +88,7 @@ BM25 scoring for keyword-based anchoring and exact term matching.
 - **Edges:** Co-occurrence relationships within the corpus
 - **Purpose:** Expand retrieval toward conceptually related sections
 
-The graph augments rather than replaces traditional vector retrieval, providing additional structural context for multi-section queries.
+The graph augments rather than replaces traditional vector retrieval, providing additional structural context for multi-section queries. The graph is maintained incrementally during ingestion and cleaned when documents are removed.
 
 ---
 
@@ -139,7 +137,7 @@ Example:
 
 ### Metrics
 
-- **Recall@5** – Percentage of queries with at least one relevant page retrieved
+- **Hit@5** – Percentage of queries with at least one relevant page retrieved
 - **Coverage** – Number of unique relevant pages retrieved
 - **Diversity** – Fraction of unique pages in the retrieved set
 
@@ -153,7 +151,7 @@ The current evaluation compares vector-only retrieval against hybrid retrieval w
 
 **Observed findings:**
 
-- Recall@5 reached 1.00 across the evaluated query set
+- Hit@5 reached 1.00 across the evaluated query set
 - Vector-only and hybrid retrieval produced comparable retrieval quality
 - Graph expansion occasionally surfaced conceptually adjacent sections
 - No degradation was observed in the current evaluation corpus

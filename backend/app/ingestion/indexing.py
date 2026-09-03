@@ -26,7 +26,7 @@ def index_chunks(chunks: List[Chunk]) -> None:
     texts = [chunk.text for chunk in chunks]
     vectors = embed_texts(texts)
 
-    # Create collection if it doesn't exist
+                                           
     if not client.collection_exists(COLLECTION_NAME):
         client.create_collection(
             collection_name=COLLECTION_NAME,
@@ -56,3 +56,40 @@ def index_chunks(chunks: List[Chunk]) -> None:
         collection_name=COLLECTION_NAME,
         points=points,
     )
+
+
+def load_indexed_chunks() -> List[Chunk]:
+    """Load all persisted chunk payloads from Qdrant."""
+    client = get_qdrant_client()
+    if not client.collection_exists(COLLECTION_NAME):
+        return []
+
+    chunks: List[Chunk] = []
+    offset = None
+    while True:
+        points, next_offset = client.scroll(
+            collection_name=COLLECTION_NAME,
+            limit=256,
+            offset=offset,
+            with_payload=True,
+            with_vectors=False,
+        )
+        for point in points:
+            payload = point.payload or {}
+            if not {"doc_id", "page_start", "page_end", "text"}.issubset(payload):
+                continue
+            chunks.append(
+                Chunk(
+                    chunk_id=str(point.id),
+                    doc_id=str(payload["doc_id"]),
+                    page_start=int(payload["page_start"]),
+                    page_end=int(payload["page_end"]),
+                    text=str(payload["text"]),
+                    entities=list(payload.get("entities", [])),
+                )
+            )
+        if next_offset is None:
+            break
+        offset = next_offset
+
+    return chunks

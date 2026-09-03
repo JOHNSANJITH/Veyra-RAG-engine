@@ -4,6 +4,8 @@ import uuid
 from pathlib import Path
 from typing import Dict, List
 
+from qdrant_client.models import PointIdsList
+
 from app.config import settings
 from app.ingestion.pipeline import ingest_pdf
 from app.models.ingestion import Chunk
@@ -35,7 +37,7 @@ def upload_documents(
             msg = "Only PDF files are supported."
             raise HTTPException(status_code=400, detail=msg)
 
-        # Generate a unique document ID
+                                       
         doc_id = str(uuid.uuid4())
         save_path = DOC_STORAGE / f"{doc_id}.pdf"
 
@@ -59,26 +61,30 @@ def remove_document(doc_id: str) -> dict:
         Status message
     """
     from app.ingestion.indexing import COLLECTION_NAME, get_qdrant_client
-    from app.retrieval.chunk_registry import _CHUNKS
+    from app.retrieval.chunk_registry import get_chunks, remove_chunks
+    from app.retrieval.graph_utils import remove_chunks as remove_graph_chunks
+    from app.retrieval.keyword_index import remove_chunks as remove_bm25_chunks
 
-    # Remove chunks from registry
-    chunks_to_remove = [cid for cid, chunk in _CHUNKS.items() if chunk.doc_id == doc_id]
-    for chunk_id in chunks_to_remove:
-        _CHUNKS.pop(chunk_id, None)
+                                                                              
+                                                        
+    chunks_to_remove = {chunk.chunk_id for chunk in get_chunks() if chunk.doc_id == doc_id}
+    remove_chunks(chunks_to_remove)
+    remove_graph_chunks(chunks_to_remove)
+    remove_bm25_chunks(chunks_to_remove)
 
-    # Remove from Qdrant
+                        
     if chunks_to_remove:
         try:
             client = get_qdrant_client()
             if client.collection_exists(COLLECTION_NAME):
                 client.delete(
                     collection_name=COLLECTION_NAME,
-                    points_selector=chunks_to_remove,
+                    points_selector=PointIdsList(points=list(chunks_to_remove)),
                 )
         except Exception as e:
             print(f"Error removing from Qdrant: {e}")
 
-    # Remove PDF file
+                     
     pdf_path = DOC_STORAGE / f"{doc_id}.pdf"
     if pdf_path.exists():
         pdf_path.unlink()
@@ -120,7 +126,7 @@ def get_document_token_counts() -> dict:
     doc_token_counts = {}
 
     for chunk in chunks:
-        # Rough estimate: 1 token ≈ 4 characters
+                                                
         tokens = len(chunk.text) // 4
         doc_token_counts[chunk.doc_id] = doc_token_counts.get(chunk.doc_id, 0) + tokens
 

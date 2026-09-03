@@ -11,10 +11,10 @@ from app.models.api import Citation
 from app.models.retrieval import ScoredChunk
 from sentence_transformers import SentenceTransformer, util
 
-# Lightweight sentence embedder
+                               
 _SENTENCE_MODEL = SentenceTransformer("all-MiniLM-L6-v2")
 
-# Conservative threshold: avoids noise
+                                      
 _SIMILARITY_THRESHOLD = 0.45
 _MAX_SENTENCES_PER_CHUNK = 2
 
@@ -39,7 +39,7 @@ def filter_citations(
     answer_embedding = _SENTENCE_MODEL.encode(answer, normalize_embeddings=True)
 
     filtered: List[Citation] = []
-    seen_snippets = set()  # Track unique snippets
+    seen_snippets = set()                         
 
     for sc in chunks:
         sentences = _split_sentences(sc.chunk.text)
@@ -64,12 +64,12 @@ def filter_citations(
         if not selected_sentences:
             continue
 
-        # Create the combined snippet string
+                                            
         final_snippet = " ".join(selected_sentences)
 
-        # CHECK FOR UNIQUENESS
-        # We use a tuple of (page, snippet) to ensure
-        # uniqueness across both content and source
+                              
+                                                     
+                                                   
         citation_key = (sc.chunk.page_start, sc.chunk.page_end, final_snippet)
 
         if citation_key not in seen_snippets:

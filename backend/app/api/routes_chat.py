@@ -18,7 +18,7 @@ def chat(request: ChatRequest) -> ChatResponse:
     """Unified QA + Summarization endpoint with memory and query rewriting."""
     session_id = request.session_id
 
-    # SUMMARIZATION MODE
+                        
     if request.mode == "summarize":
         chunks = get_chunks()
 
@@ -28,7 +28,7 @@ def chat(request: ChatRequest) -> ChatResponse:
                 citations=[],
             )
 
-        # Filter chunks by selected doc_ids if provided
+                                                       
         if request.doc_ids:
             chunks = [chunk for chunk in chunks if chunk.doc_id in request.doc_ids]
 
@@ -38,7 +38,7 @@ def chat(request: ChatRequest) -> ChatResponse:
                     citations=[],
                 )
 
-        # ADD TOKEN CHECK HERE
+                              
         context = "\n\n".join(chunk.text for chunk in chunks)
         estimated_tokens = len(context) // 4
 
@@ -57,7 +57,7 @@ to summarize ({estimated_tokens:,} tokens). "
 
         answer = llm_chat(messages=messages)
 
-        # Store conversation
+                            
         conversation_memory.add_user_message(session_id, request.query)
         conversation_memory.add_assistant_message(session_id, answer)
 
@@ -66,21 +66,21 @@ to summarize ({estimated_tokens:,} tokens). "
             citations=[],
         )
 
-    # QA MODE (DEFAULT)
+                       
 
-    # 1. Load conversation history
+                                  
     history = conversation_memory.get_history(session_id)
 
-    # 2. Rewrite query using history
+                                    
     rewritten_query = rewrite_query(
         question=request.query,
         history=history,
     )
 
-    # 3. Retrieve documents
+                           
     results = hybrid_graph_search(rewritten_query, request.top_k)
 
-    # Filter results by selected doc_ids if provided
+                                                    
     if request.doc_ids:
         results = [r for r in results if r.chunk.doc_id in request.doc_ids]
 
@@ -90,23 +90,23 @@ to summarize ({estimated_tokens:,} tokens). "
             citations=[],
         )
 
-    # 4. Build prompt
+                     
     context = "\n\n".join(sc.chunk.text for sc in results)
     messages = build_rag_prompt(
         context=context,
         question=rewritten_query,
     )
 
-    # 5. Generate answer
+                        
     answer = llm_chat(messages=messages)
 
-    # 6. Filter citations
+                         
     citations = filter_citations(
         answer=answer,
         chunks=results,
     )
 
-    # 7. Store conversation
+                           
     conversation_memory.add_user_message(session_id, request.query)
     conversation_memory.add_assistant_message(session_id, answer)
 

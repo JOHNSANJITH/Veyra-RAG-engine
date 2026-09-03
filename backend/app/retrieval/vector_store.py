@@ -13,6 +13,9 @@ def vector_search(query: str, top_k: int = 5) -> List[ScoredChunk]:
     """Search for semantically similar chunks."""
     client = get_qdrant_client()
 
+    if not query.strip() or not client.collection_exists(COLLECTION_NAME):
+        return []
+
     query_vector = embed_texts([query])[0]
 
     results: List[ScoredPoint] = client.search(
