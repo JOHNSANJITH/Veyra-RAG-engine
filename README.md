@@ -8,447 +8,122 @@ pinned: false
 license: mit
 ---
 
+<div align="center">
+
 # Veyra
 
-**Hybrid Graph-Augmented Retrieval-Augmented Generation System**
+### Hybrid Graph-RAG for Grounded Document Intelligence
 
-Veyra is an engineering-focused document summarization and question-answering system that combines vector search, graph-based reasoning, and LLM-based generation to provide grounded, citation-aware responses over uploaded documents.
+Veyra is a multi-document question-answering and research assistant that combines dense retrieval, lexical search, graph expansion, reranking, and LLM generation to produce grounded answers with citations.
 
-The system extends traditional vector retrieval with concept co-occurrence graphs, enabling contextual expansion for complex queries that require information from multiple sections of a document.
+<p>
+  <a href="https://github.com/JOHNSANJITH/Veyra-RAG-engine"><img src="https://img.shields.io/badge/GitHub-Veyra-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
+  <a href="https://github.com/JOHNSANJITH/Veyra-RAG-engine/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-2ea44f?style=for-the-badge" alt="MIT License"></a>
+  <img src="https://img.shields.io/badge/Version-2.0-6f42c1?style=for-the-badge" alt="Version 2.0">
+  <img src="https://img.shields.io/badge/Status-Active-1f883d?style=for-the-badge" alt="Active">
+</p>
 
-**Demo:** Add the deployed frontend URL here when a public deployment is available.
+<p>
+  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/FastAPI-0.115%2B-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI">
+  <img src="https://img.shields.io/badge/Next.js-14-000000?style=flat-square&logo=nextdotjs&logoColor=white" alt="Next.js">
+  <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=111111" alt="React">
+  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/JavaScript-ES6%2B-F7DF1E?style=flat-square&logo=javascript&logoColor=111111" alt="JavaScript">
+  <img src="https://img.shields.io/badge/CSS-3-663399?style=flat-square&logo=css3&logoColor=white" alt="CSS">
+  <img src="https://img.shields.io/badge/Qdrant-Vector_DB-DC244C?style=flat-square" alt="Qdrant">
+  <img src="https://img.shields.io/badge/Docker-Containerized-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker">
+</p>
+
+<p>
+  <a href="#architecture">Architecture</a> ·
+  <a href="#retrieval-pipeline">Retrieval</a> ·
+  <a href="#evaluation">Evaluation</a> ·
+  <a href="#quick-start">Quick Start</a> ·
+  <a href="#roadmap">Roadmap</a>
+</p>
+
+</div>
 
 ---
 
-## Features
+## Why Veyra?
 
-- **PDF Upload & Ingestion** – Document processing and indexing
-- **Hybrid Retrieval Pipeline**
-  - Dense vector similarity search
-  - BM25 keyword search
-  - Concept co-occurrence graph expansion
-- **Unified Chat Interface** – Question answering and document summarization
-- **Citation-Aware Responses** – Grounded answers with source attribution
-- **Conversation Memory** – Short-term context retention across turns
-- **Query Rewriting** – Context-aware reformulation using conversation history
-- **Token Limit Protection** – Document size validation and context control
-- **Evaluation Framework** – Retrieval quality assessment
-- **Ablation Studies** – Baseline comparisons and retrieval experiments
+Traditional vector RAG is strong at semantic similarity, but complex questions often depend on exact terminology, relationships between concepts, and information distributed across multiple sections.
+
+Veyra explores a hybrid approach that combines three retrieval signals:
+
+- **Dense retrieval** for semantic similarity
+- **BM25** for exact and lexical matching
+- **Concept graphs** for contextual expansion across related sections
+
+A reranking stage then refines the candidate set before context is assembled for the LLM.
+
+The goal is simple:
+
+> **Retrieve better evidence before asking the model to generate an answer.**
 
 ---
 
-## System Architecture
+## ✨ Features
+
+| Capability | What Veyra does |
+| --- | --- |
+| 📄 Document ingestion | Upload and process PDF documents into a searchable corpus |
+| 🔎 Dense retrieval | Sentence-transformer embeddings with vector search |
+| 🧭 Lexical retrieval | BM25 keyword matching for exact terminology |
+| 🕸️ Graph retrieval | Concept co-occurrence expansion across related chunks |
+| 🎯 Reranking | Cross-encoder reranking of retrieved candidates |
+| 💬 Conversational QA | Short-term memory for multi-turn interactions |
+| ✍️ Query rewriting | Reformulates follow-up questions using conversation context |
+| 🔗 Citations | Returns grounded source references with generated answers |
+| 🧪 Evaluation | Retrieval metrics and baseline/ablation experiments |
+| 🐳 Deployment | Docker-ready backend with separate Next.js frontend |
+
+---
+
+## 🏗️ Architecture
 
 ```text
-PDF Document
-     |
-     v
-Chunking & Parsing
-     |
-     +----------------------+----------------------+
-     |                                             |
-     v                                             v
-Embeddings Generation                       Concept Extraction
-     |                                             |
-     v                                             v
-Vector Index                                Co-occurrence Graph
-     |                                             |
-     +----------------------+----------------------+
-                            |
-                            v
-                   Hybrid Graph-RAG Retrieval
-                            |
-                            v
-              Context Assembly & Prompt Construction
-                            |
-                            v
-                       LLM Generation
-                            |
-                            v
-                     Answer + Citations
-```
-
----
-
-## Retrieval Strategy
-
-Veyra employs a three-stage hybrid retrieval pipeline.
-
-### 1. Vector Search
-
-Dense embeddings using sentence-transformer models for semantic similarity.
-
-### 2. Lexical Search
-
-BM25 scoring for keyword-based anchoring and exact term matching.
-
-### 3. Graph Expansion
-
-- **Nodes:** Extracted concepts from document chunks
-- **Edges:** Co-occurrence relationships within the corpus
-- **Purpose:** Expand retrieval toward conceptually related sections
-
-The graph augments rather than replaces traditional vector retrieval, providing additional structural context for multi-section queries. The graph is maintained incrementally during ingestion and cleaned when documents are removed.
-
----
-
-## Evaluation
-
-### Evaluation Corpus
-
-The initial evaluation corpus uses:
-
-**"Attention Is All You Need"**
-
-by Vaswani et al.
-
-The corpus provides:
-
-- Dense technical terminology
-- Cross-section conceptual dependencies
-- Well-defined technical concepts
-- Questions requiring multi-section retrieval
-
-### Query Types
-
-#### Localized Queries
-
-Single-concept retrieval.
-
-Example:
-
-> "What is scaled dot-product attention?"
-
-#### Distributed Queries
-
-Multi-section synthesis.
-
-Example:
-
-> "How does self-attention replace recurrence and convolution?"
-
-#### Comparative Queries
-
-Cross-concept analysis.
-
-Example:
-
-> "Compare encoder, decoder, and encoder-decoder architectures."
-
-### Metrics
-
-- **Hit@5** – Percentage of queries with at least one relevant page retrieved
-- **Coverage** – Number of unique relevant pages retrieved
-- **Diversity** – Fraction of unique pages in the retrieved set
-
----
-
-## Results
-
-### Baseline Comparison: Vector Search vs. Hybrid Graph-RAG
-
-The current evaluation compares vector-only retrieval against hybrid retrieval with graph expansion.
-
-**Observed findings:**
-
-- Hit@5 reached 1.00 across the evaluated query set
-- Vector-only and hybrid retrieval produced comparable retrieval quality
-- Graph expansion occasionally surfaced conceptually adjacent sections
-- No degradation was observed in the current evaluation corpus
-
-These results are corpus-specific and should be interpreted as an initial evaluation rather than a universal benchmark.
-
-### Ablation Study
-
-The graph component is evaluated using two configurations:
-
-- **Vector Only**
-- **Vector + Graph Expansion**
-
-The ablation study measures whether graph augmentation changes recall, coverage, and diversity.
-
----
-
-## Conversation Memory & Query Rewriting
-
-- **Short-term memory** maintains recent conversation turns
-- **Context-aware rewriting** reformulates follow-up queries using chat history
-- Enables conversational interaction without directly polluting the retrieval query
-
----
-
-## Tech Stack
-
-### Backend
-
-- Python
-- FastAPI
-- LangChain
-- Qdrant / Vector Store
-- NetworkX
-- BM25
-- Sentence Transformers
-- Groq / OpenAI-compatible LLM APIs
-
-### Frontend
-
-- Next.js
-- React
-- Modern chat-style interface
-- PDF upload interface
-- Glassmorphism design system
-
-### Development & Deployment
-
-- Ruff
-- Pre-commit hooks
-- Docker
-- GitHub Actions
-- Hugging Face Spaces
-- Vercel
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- Python 3.10+
-- Node.js 18+
-- Git
-
-### Clone Repository
-
-```bash
-git clone https://github.com/JOHNSANJITH/veyra-rag-engine.git
-cd veyra-rag-engine
-```
-
-### Backend Setup
-
-```bash
-cd backend
-python -m venv .venv
-```
-
-On Windows:
-
-```bash
-.venv\Scripts\activate
-```
-
-On Linux/macOS:
-
-```bash
-source .venv/bin/activate
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-pip install -e .
-```
-
-Run the backend:
-
-```bash
-uvicorn app.main:app --reload
-```
-
-Backend runs at:
-
-```text
-http://127.0.0.1:8000
-```
-
-### Frontend Setup
-
-Open a second terminal:
-
-```bash
-cd frontend
-npm install
-```
-
-Create the local environment file:
-
-```bash
-copy .env.example .env.local
-```
-
-On Linux/macOS:
-
-```bash
-cp .env.example .env.local
-```
-
-Run the frontend:
-
-```bash
-npm run dev
-```
-
-Frontend runs at:
-
-```text
-http://localhost:3000
-```
-
----
-
-## Code Quality
-
-Veyra uses automated code-quality tooling.
-
-### Install Pre-commit Hooks
-
-```bash
-pre-commit install
-```
-
-### Format & Lint
-
-```bash
-ruff check .
-ruff format .
-```
-
----
-
-## Docker
-
-Build the image:
-
-```bash
-docker build -t veyra .
-```
-
-Run the container:
-
-```bash
-docker run -p 8000:8000 veyra
-```
-
----
-
-## Project Structure
-
-```text
-veyra-rag-engine/
-|
-+-- backend/
-|   +-- app/
-|       +-- api/
-|       +-- core/
-|       +-- evaluation/
-|       +-- ingestion/
-|       +-- memory/
-|       +-- models/
-|       +-- retrieval/
-|
-+-- frontend/
-|
-+-- .github/
-|   +-- workflows/
-|
-+-- Dockerfile
-+-- pyproject.toml
-+-- requirements.txt
-+-- .gitignore
-+-- LICENSE
-+-- README.md
-```
-
----
-
-## Deployment
-
-The application is designed to support separate frontend and backend deployments.
-
-### Frontend
-
-The Next.js frontend can be deployed using Vercel.
-
-### Backend
-
-The FastAPI backend can be deployed using Hugging Face Spaces or another container-compatible platform.
-
-Production URLs should be added here after the Veyra deployments are created.
-
-Binary document files are excluded from version control and handled at runtime.
-
----
-
-## Roadmap
-
-- [ ] Improve hybrid retrieval weighting
-- [ ] Add advanced reranking
-- [ ] Improve graph construction
-- [ ] Expand retrieval evaluation
-- [ ] Add answer-quality evaluation
-- [ ] Add hallucination detection
-- [ ] Add retrieval latency monitoring
-- [ ] Add token and cost tracking
-- [ ] Add streaming responses
-- [ ] Improve document parsing
-- [ ] Support multiple knowledge bases
-- [ ] Add authentication and user management
-- [ ] Add production monitoring
-- [ ] Expand automated CI/CD deployment
-
----
-
-## Project Goals
-
-Veyra explores modern retrieval-augmented generation systems from an engineering perspective.
-
-The project focuses on combining information retrieval, graph reasoning, natural language processing, and large language models into a grounded document intelligence system.
-
-The main areas of focus are:
-
-```text
-Information Retrieval
-        +
-Natural Language Processing
-        +
-Graph Reasoning
-        +
-Large Language Models
-        +
-Backend Engineering
-        +
-Evaluation
-        +
-Deployment
-```
-
----
-
-## Author
-
-**JOHN SANJITH**
-
-GitHub: [@JOHNSANJITH](https://github.com/JOHNSANJITH)
-
----
-
-## License
-
-This project is licensed under the MIT License.
-
-See the `LICENSE` file for details.
-
----
-
-## Contributing
-
-Contributions are welcome.
-
-Please feel free to submit a pull request or open an issue for improvements and suggestions.
-
----
-
-## Contact
-
-For questions, feedback, or collaboration opportunities, please open an issue on the GitHub repository.
+                         ┌───────────────────┐
+                         │    PDF Documents  │
+                         └─────────┬─────────┘
+                                   │
+                                   ▼
+                     ┌─────────────────────────┐
+                     │  Parsing / Cleaning     │
+                     │  Chunking / Metadata    │
+                     └────────────┬────────────┘
+                                  │
+                ┌─────────────────┼─────────────────┐
+                │                 │                 │
+                ▼                 ▼                 ▼
+        ┌──────────────┐  ┌──────────────┐  ┌─────────────────┐
+        │  Embeddings  │  │    BM25      │  │ Concept Graph   │
+        │  + Qdrant    │  │    Index     │  │ + Expansion     │
+        └──────┬───────┘  └──────┬───────┘  └────────┬────────┘
+               │                 │                   │
+               └─────────────────┼───────────────────┘
+                                 ▼
+                      ┌───────────────────────┐
+                      │ Hybrid Retrieval      │
+                      │ + Candidate Merging   │
+                      └───────────┬───────────┘
+                                  ▼
+                      ┌───────────────────────┐
+                      │ Cross-Encoder         │
+                      │ Reranking             │
+                      └───────────┬───────────┘
+                                  ▼
+                      ┌───────────────────────┐
+                      │ Context Assembly      │
+                      │ + Prompt Construction │
+                      └───────────┬───────────┘
+                                  ▼
+                      ┌───────────────────────┐
+                      │ LLM Generation        │
+                      └───────────┬───────────┘
+                                  ▼
+                      ┌───────────────────────┐
+                      │ Answer + Citations    │
+                      └───────────────────────┘
