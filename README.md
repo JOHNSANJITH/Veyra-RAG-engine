@@ -1,13 +1,3 @@
----
-title: Veyra Backend
-colorFrom: blue
-colorTo: indigo
-sdk: docker
-app_port: 7860
-pinned: false
-license: mit
----
-
 <div align="center">
 
 # Veyra
@@ -65,24 +55,24 @@ The goal is simple:
 
 ---
 
-## ✨ Features
+##  Features
 
 | Capability | What Veyra does |
 | --- | --- |
-| 📄 Document ingestion | Upload and process PDF documents into a searchable corpus |
-| 🔎 Dense retrieval | Sentence-transformer embeddings with vector search |
-| 🧭 Lexical retrieval | BM25 keyword matching for exact terminology |
-| 🕸️ Graph retrieval | Concept co-occurrence expansion across related chunks |
-| 🎯 Reranking | Cross-encoder reranking of retrieved candidates |
-| 💬 Conversational QA | Short-term memory for multi-turn interactions |
-| ✍️ Query rewriting | Reformulates follow-up questions using conversation context |
-| 🔗 Citations | Returns grounded source references with generated answers |
-| 🧪 Evaluation | Retrieval metrics and baseline/ablation experiments |
-| 🐳 Deployment | Docker-ready backend with separate Next.js frontend |
+|  Document ingestion | Upload and process PDF documents into a searchable corpus |
+|  Dense retrieval | Sentence-transformer embeddings with vector search |
+|  Lexical retrieval | BM25 keyword matching for exact terminology |
+|  Graph retrieval | Concept co-occurrence expansion across related chunks |
+|  Reranking | Cross-encoder reranking of retrieved candidates |
+|  Conversational QA | Short-term memory for multi-turn interactions |
+|  Query rewriting | Reformulates follow-up questions using conversation context |
+|  Citations | Returns grounded source references with generated answers |
+|  Evaluation | Retrieval metrics and baseline/ablation experiments |
+|  Deployment | Docker-ready backend with separate Next.js frontend |
 
 ---
 
-## 🏗️ Architecture
+##  Architecture
 
 ```text
                          ┌───────────────────┐
