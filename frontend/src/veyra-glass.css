@@ -1,0 +1,112 @@
+/* Veyra — modern glassmorphism design system */
+:root {
+  --veyra-bg: #07111f;
+  --veyra-surface: rgba(255,255,255,.07);
+  --veyra-surface-strong: rgba(255,255,255,.11);
+  --veyra-border: rgba(255,255,255,.14);
+  --veyra-text: #f7fbff;
+  --veyra-muted: #9fb0c3;
+  --veyra-accent: #8b7cff;
+  --veyra-accent-2: #42d6c5;
+  --veyra-shadow: 0 24px 80px rgba(0,0,0,.34);
+  --veyra-radius: 24px;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { min-height: 100%; margin: 0; }
+body {
+  color: var(--veyra-text);
+  background:
+    radial-gradient(circle at 15% 15%, rgba(139,124,255,.22), transparent 32%),
+    radial-gradient(circle at 85% 10%, rgba(66,214,197,.16), transparent 28%),
+    radial-gradient(circle at 55% 90%, rgba(67,113,255,.13), transparent 34%),
+    var(--veyra-bg);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.veyra-app {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+.veyra-app::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, black, transparent 82%);
+}
+.veyra-shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; padding: 28px 0 64px; }
+.veyra-nav {
+  display:flex; align-items:center; justify-content:space-between; gap:20px;
+  padding: 14px 18px; margin-bottom: 34px;
+  background: rgba(255,255,255,.055);
+  border: 1px solid var(--veyra-border);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border-radius: 18px;
+  box-shadow: 0 14px 45px rgba(0,0,0,.18);
+}
+.veyra-brand { display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:-.03em; }
+.veyra-mark {
+  width:36px; height:36px; display:grid; place-items:center; border-radius:12px;
+  background: linear-gradient(135deg, rgba(139,124,255,.95), rgba(66,214,197,.82));
+  color:#07111f; font-weight:900; box-shadow: 0 8px 28px rgba(139,124,255,.25);
+}
+.veyra-hero { display:grid; grid-template-columns: 1.15fr .85fr; gap:24px; align-items:stretch; }
+.veyra-card {
+  background: var(--veyra-surface);
+  border: 1px solid var(--veyra-border);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: var(--veyra-radius);
+  box-shadow: var(--veyra-shadow);
+}
+.veyra-hero-card { padding: clamp(28px, 5vw, 58px); min-height: 440px; display:flex; flex-direction:column; justify-content:center; }
+.veyra-eyebrow { color: var(--veyra-accent-2); text-transform:uppercase; font-size:.75rem; font-weight:800; letter-spacing:.16em; }
+.veyra-title { font-size: clamp(3rem, 7vw, 6.4rem); line-height:.92; letter-spacing:-.065em; margin:14px 0 22px; }
+.veyra-gradient-text {
+  background: linear-gradient(110deg, #fff 20%, #bcb4ff 52%, #7ce7da 88%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.veyra-copy { max-width:680px; color:var(--veyra-muted); font-size:1.06rem; line-height:1.75; }
+.veyra-actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:26px; }
+.veyra-btn {
+  border:1px solid var(--veyra-border); color:var(--veyra-text); text-decoration:none;
+  padding:12px 17px; border-radius:14px; font-weight:700; cursor:pointer;
+  background:rgba(255,255,255,.07); transition:.2s ease;
+}
+.veyra-btn:hover { transform:translateY(-2px); background:rgba(255,255,255,.12); }
+.veyra-btn-primary { border-color:transparent; color:#07111f; background:linear-gradient(135deg,#a79cff,#67e0d3); }
+.veyra-panel { padding:22px; }
+.veyra-panel-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; height:100%; }
+.veyra-stat { padding:20px; min-height:130px; display:flex; flex-direction:column; justify-content:space-between; }
+.veyra-stat strong { font-size:2rem; letter-spacing:-.04em; }
+.veyra-stat span { color:var(--veyra-muted); font-size:.85rem; }
+.veyra-section { margin-top:24px; }
+.veyra-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.veyra-feature { padding:24px; min-height:170px; }
+.veyra-feature h3 { margin:0 0 10px; }
+.veyra-feature p { color:var(--veyra-muted); line-height:1.65; margin:0; }
+.veyra-chat {
+  display:grid; grid-template-columns:280px 1fr; min-height:620px; overflow:hidden;
+}
+.veyra-sidebar { padding:20px; border-right:1px solid var(--veyra-border); background:rgba(0,0,0,.12); }
+.veyra-main { display:flex; flex-direction:column; }
+.veyra-messages { flex:1; padding:28px; overflow:auto; }
+.veyra-message { max-width:780px; padding:18px 20px; margin-bottom:14px; border-radius:18px; line-height:1.65; }
+.veyra-message-user { margin-left:auto; background:rgba(139,124,255,.16); border:1px solid rgba(139,124,255,.22); }
+.veyra-message-ai { background:rgba(255,255,255,.055); border:1px solid var(--veyra-border); }
+.veyra-composer { padding:18px; border-top:1px solid var(--veyra-border); display:flex; gap:10px; }
+.veyra-input { flex:1; color:var(--veyra-text); background:rgba(255,255,255,.055); border:1px solid var(--veyra-border); border-radius:15px; padding:14px 16px; outline:none; }
+.veyra-input:focus { border-color:rgba(139,124,255,.7); box-shadow:0 0 0 4px rgba(139,124,255,.1); }
+
+@media (max-width: 850px) {
+  .veyra-hero, .veyra-chat { grid-template-columns:1fr; }
+  .veyra-sidebar { border-right:0; border-bottom:1px solid var(--veyra-border); }
+  .veyra-grid { grid-template-columns:1fr; }
+  .veyra-shell { width:min(100% - 24px, 1180px); }
+}
